@@ -11,5 +11,5 @@ const firebaseConfig = {
 	measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
   
-export const InitFBApp = () => initializeApp(firebaseConfig);
-export const analytics = getAnalytics(InitFBApp());
+export const initFB = () => initializeApp(firebaseConfig);
+export const analytics = getAnalytics(initFB());

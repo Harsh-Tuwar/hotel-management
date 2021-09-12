@@ -2,7 +2,8 @@ import React from 'react';
 import { store } from './redux/store/config';
 import { Provider } from 'react-redux';
 import AppRoutes from './routes';
-import { InitFBApp } from './firebase';
+import { initFB } from './firebase';
+import { Storage } from './storage';
 
 export interface AppProps {
 	
@@ -10,7 +11,8 @@ export interface AppProps {
  
 const App: React.FunctionComponent<AppProps> = () => {
 	React.useEffect(() => {
-		InitFBApp();
+		initFB();
+		Storage.init();
 	}, []);
 
 	return (

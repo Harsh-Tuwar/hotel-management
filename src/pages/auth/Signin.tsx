@@ -15,7 +15,7 @@ import {
 	Theme,
 	Typography
 } from '@material-ui/core';
-
+import { FBAuth } from '../../firebase/auth';
 
 interface SigninProps {
 	
@@ -47,7 +47,8 @@ const Signin: React.FunctionComponent<SigninProps> = () => {
 
 	const onSubmit = (data: any) => {
 		clearErrors();
-		console.log(data);
+		
+		FBAuth.login(data.email, data.password);
 	};
 
 	return (
