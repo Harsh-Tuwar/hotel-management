@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Copyright } from '../../components/common/Copyright';
+import PropTypes from 'prop-types';
 import { LockOpenOutlined as LockOutlinedIcon } from '@material-ui/icons';
 import { useForm, Controller } from 'react-hook-form';
 import {
@@ -15,11 +16,12 @@ import {
 	Theme,
 	Typography
 } from '@material-ui/core';
-import { FBAuth } from '../../firebase/auth';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
+import { loginUser } from '../../redux/modules/auth/authActions';
 
-interface SigninProps {
-	
-}
+interface SigninProps {}
  
 const useStyles = makeStyles((theme: Theme) => ({
 	paper: {
@@ -45,10 +47,14 @@ const Signin: React.FunctionComponent<SigninProps> = () => {
 	const classes = useStyles();
 	const { control, handleSubmit, formState: { errors }, clearErrors } = useForm();
 
-	const onSubmit = (data: any) => {
+	const onSubmit = async (data: any) => {
 		clearErrors();
 		
-		FBAuth.login(data.email, data.password);
+		data.email = 'tester@99.ca';
+		data.password = 'tester@99';
+
+		// await FBAuth.login(data.email, data.password);
+		await loginUser(data.email, data.password);
 	};
 
 	return (
@@ -67,7 +73,7 @@ const Signin: React.FunctionComponent<SigninProps> = () => {
 					<Controller
 						name="email"
 						control={control}
-						defaultValue=""
+						defaultValue="tester@99.ca"
 						rules={{
 							required: true,
 							pattern: {
@@ -96,7 +102,7 @@ const Signin: React.FunctionComponent<SigninProps> = () => {
 					<Controller
 						name="password"
 						control={control}
-						defaultValue=""
+						defaultValue="tester@99"
 						render={({ field }: any) =>
 							<TextField
 								{...field}
@@ -137,5 +143,23 @@ const Signin: React.FunctionComponent<SigninProps> = () => {
 		</Container>
 	);
 }
+
+
+Signin.propTypes = {
+	loginUser: PropTypes.func.isRequired
+}
+
+const mapStateToProps = (state: AppState) => ({
+	auth: state.auth
+});
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, AnyAction>) => {
+	return {
+		loginUser
+	}
+}
  
-export default Signin;
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Signin);

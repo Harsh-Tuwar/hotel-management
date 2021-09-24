@@ -1,12 +1,12 @@
 import localforage from 'localforage';
 
-export abstract class Storage {
+export default abstract class Storage {
 	static live: boolean = false;
 	static store: LocalForage;
 
-	static init() {
+	static async init() {
 		try {
-			localforage.ready().then(() => {
+			await localforage.ready().then(() => {
 				this.live = true;
 				this.store = localforage.createInstance({
 					driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
@@ -21,7 +21,11 @@ export abstract class Storage {
 	}
 
 	static async set(key: string, value: any) {
-		return await this.store.setItem(key, value);
+		if (this.live) {
+			await this.store.setItem(key, JSON.stringify(value));
+		} else {
+			console.log('Not Live');
+		}
 	}
 
 	static async get(key: string) {

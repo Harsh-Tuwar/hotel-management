@@ -1,62 +1,79 @@
 import * as Auth from 'firebase/auth';
 
 export class FBAuth {
-	static authenticated = false;
-	static user: any = null; // add types for fbauth.user
-	
-	static login(email: string, pass: string) {
+	static async login(email: string, pass: string) {
 		const auth = Auth.getAuth();
+		const authReq = await Auth.signInWithEmailAndPassword(auth, email, pass);
 
-		Auth.signInWithEmailAndPassword(auth, email, pass)
-			.then(async (userCredential) => {
-				FBAuth.user = userCredential.user;
-				FBAuth.authenticated = true;
-			}).catch((err) => {
-				const { code, message } = err;
-				console.log('Login Fail');
-				console.log(code, message);
-			});
+
+		return authReq.user;
+		// if (authReq.user) {
+		// 	return authReq.user;
+		// 	await storage.set('my-hotel-user', authReq.user);
+		// } else {
+		// 	this.setUser();
+		// 	console.log('Login Fail');
+		// }
 	}
 
-	static logout() {
-		const auth = Auth.getAuth();
+	// static logout() {
+	// 	const auth = Auth.getAuth();
 
-		Auth.signOut(auth)
-			.then(async () => {
-				FBAuth.authenticated = false;
-				FBAuth.user = null;
-			}).catch((err) => {
-				const { code, message } = err;
-				console.log(code, message);
-			});
-	}
+	// 	Auth.signOut(auth)
+	// 		.then(async () => {
+	// 			this.setUser();
+	// 		}).catch((err) => {
+	// 			const { code, message } = err;
+	// 			console.log(code, message);
+	// 		});
+	// }
 
 	static getAuthInstance() {
 		return Auth.getAuth();
 	}
 
-	static setUser(user: Auth.User | null) {
-		if (user !== null) {
-			this.authenticated = true;
-			this.user = user;
-		} else {
-			this.authenticated = false;
-			this.user = null;
-		}
-	}
+	// static setUser(user?: Auth.User | undefined) {
+	// 	if (user) {
+	// 		this.authenticated = true;
+	// 		this.user = user;
+	// 	} else {
+	// 		this.authenticated = false;
+	// 		this.user = null;
+	// 	}
+	// }
 
-	static authChangeHandler() {
-		const auth = Auth.getAuth();
+	// static authChangeHandler() {
+	// 	const auth = Auth.getAuth();
 		
-		Auth.onAuthStateChanged(auth, (u) => {
-			console.log(u);
-			if (u) {
-				FBAuth.authenticated = true;
-				FBAuth.user = u;
-			}
+	// 	Auth.onAuthStateChanged(auth, async (u) => {
+	// 		if (u) {
+	// 			this.setUser(u);
+	// 		} else {
+	// 			this.setUser();
+	// 			await storage.clear();
+	// 		}
+	// 	});
+	// }
 
+	// static async checkAuthStatus() {
+	// 	if (!this.authenticated && this.user && Object.values(this.user).length > 0) {
+	// 		this.authenticated = true;
+	// 	}
 
-			console.log('FBAuth.authenticated', FBAuth.authenticated);
-		});
-	}
+	// 	if (!this.authenticated) {
+	// 		let userData: any = await storage.get('my-hotel-user');
+
+	// 		if (userData) {
+	// 			try {
+	// 				userData = JSON.parse(userData);
+	// 			} catch (error) {
+	// 				console.error(error);
+	// 			}
+
+	// 			this.setUser(userData);
+	// 		} else {
+	// 			this.setUser();
+	// 		}
+	// 	}
+	// }
 }

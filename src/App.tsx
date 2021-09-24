@@ -1,20 +1,18 @@
 import React from 'react';
-import { store } from './redux/store/config';
+import { configureStore } from './redux/store/config';
 import { Provider } from 'react-redux';
 import AppRoutes from './routes';
-import { initFB } from './firebase';
-import { Storage } from './storage';
+// import { initFB } from './firebase';
+// import storage from './storage';
+// import { FBAuth } from './firebase/auth';
 
 export interface AppProps {
 	
 }
  
 const App: React.FunctionComponent<AppProps> = () => {
-	React.useEffect(() => {
-		initFB();
-		Storage.init();
-	}, []);
-
+	const store = configureStore();
+	
 	return (
 		<Provider store={store}>
 			<AppRoutes />

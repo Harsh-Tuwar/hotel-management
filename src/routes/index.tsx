@@ -1,70 +1,64 @@
-import { createBrowserHistory } from 'history';
+import { BrowserRouter as Router, Route, Switch, Redirect, RouteProps } from 'react-router-dom';
 import * as React from 'react';
-import { BrowserRouter as Router, Route, RouteProps, Switch } from 'react-router-dom';
-import { FBAuth } from '../firebase/auth';
 import Signin from '../pages/auth/Signin';
 import Home from '../pages/landing/Home';
+import { initFB } from '../firebase';
+import storage from '../storage';
+import { connect, useSelector } from 'react-redux';
+import { updateCurrentUser } from '../redux/modules/auth/authActions';
+import { createBrowserHistory } from 'history';
 
-interface RouteInfoProps extends RouteProps{
-	title?: string;
-	path: string;
-	icon?: string;
-	privateRoute?: boolean;
-	component: React.ComponentType<any>;
-}
-
-export const routes: RouteInfoProps[] = [
-	{
-		path: "/home",
-		title: "Home",
-		component: Home,
-		privateRoute: true
-	},
-	{
-		path: '/login',
-		title: 'Login',
-		component: Signin
-	}
-]
-
-export interface AppRoutesProps {
+interface AppRoutesProps {
 	
-}
-
-const AppRoutes: React.FunctionComponent<AppRoutesProps> = () => {
-	const [loggedIn, setLoggedIn] = React.useState(false);
-	
-	React.useEffect(() => {
-		const authInstace = FBAuth.getAuthInstance();
-		const history = createBrowserHistory();
-
-		authInstace.onAuthStateChanged((u) => {
-			if (u) {
-				setLoggedIn(true);
-				FBAuth.setUser(u);
-				history.push('/home');
-			} else {
-				setLoggedIn(false);
-				FBAuth.setUser(null);
-				history.push('/login');
-			}
-		});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loggedIn]);
-
-	return (
-		(loggedIn ? <Router>
-			<Switch>
-				{routes.map((route, index) => {
-					if (route.privateRoute) {
-						return (<Route exact key={`route-${route.path}`} {...route} />)
-					} else {
-						return <Home key={index} />;
-					}
-				})}
-			</Switch>
-		</Router> : <Signin />)
-	);
 }
  
-export default AppRoutes;
+const AppRoutes: React.FunctionComponent<AppRoutesProps> = () => {
+	React.useEffect(() => {
+		initFB();
+		storage.init()
+			.catch((err) => console.log(err))
+			.finally(async () => {
+				let user: any = await storage.get('my-hotel-user');
+				const history = createBrowserHistory();
+				
+				try {
+					user = JSON.parse(user);
+				} catch (error) { console.error('Error parsing User', error); }
+
+				if (user) {
+					updateCurrentUser(user);
+					history.push('/home');
+				}
+			});
+	}, []);
+
+	return (
+		<Router>
+			<Switch>
+				<Route exact path="/login" component={Signin} />
+				<PrivateRoute exact path="/home" component={Home} />
+			</Switch>
+		</Router>
+	);
+}
+
+interface PrivateRouteProps extends RouteProps {
+	component: React.ComponentType<any>;
+}
+ 
+const PrivateRoute: React.FunctionComponent<PrivateRouteProps> = ({ component: Component, ...rest }) => {
+	const auth: AuthState = useSelector((state: AppState) => state.auth);
+
+	console.log(auth);
+	return (
+		<Route {...rest} render={props => (auth.loggedIn) ? <Component {...props} /> : <Redirect to="/login" /> } />
+	);
+}
+
+const mapStateToProps = (state: AppState) => ({
+	auth: state.auth
+});
+
+connect(mapStateToProps, {})(PrivateRoute);
+ 
+export default connect(mapStateToProps, { updateCurrentUser })(AppRoutes);
