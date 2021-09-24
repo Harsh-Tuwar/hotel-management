@@ -1,16 +1,20 @@
-export interface User {
-	fname: string;
-	lname: string;
-	email: string;
-	ph: string;
+import * as actionTypes from './authTypes';
+
+const initialState: AuthState = {
+	loggedIn: false,
+	user: null
 }
 
-export interface State {
-	authenticated: boolean;
-}
-
-const authReducers = (state: State = { authenticated: false }, action: any) => {
+const authReducers = (state: AuthState = initialState, action: AuthAction) => {
 	switch (action.type) {
+		case actionTypes.SET_CURRENT_USER:
+			console.log('here');
+			return {
+				...state,
+				loggedIn: Boolean(action.user.length > 0),
+				user: action.user
+			};
+		
 		default:
 			return state;
 	}

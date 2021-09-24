@@ -4,3 +4,6 @@ api/.env
 .vercel
 .DS_Store
 /build
+.env
+yarn-error.log
+api/yarn-error.log

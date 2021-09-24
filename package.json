@@ -1,7 +1,7 @@
 {
   "name": "hotel-management",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "author": "Harsh Tuwar",
   "license": "MIT",
   "dependencies": {
@@ -16,9 +16,11 @@
     "@types/react-dom": "^17.0.0",
     "axios": "^0.21.1",
     "concurrently": "^6.2.1",
+    "firebase": "^9.0.2",
     "localforage": "^1.10.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-hook-form": "^7.15.3",
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.1",
     "react-scripts": "4.0.3",
@@ -29,11 +31,13 @@
   },
   "scripts": {
     "start": "concurrently \"npm run start:app\" \"npm run start:server\"",
+    "dev": "yarn start",
     "start:app": "react-scripts start",
     "start:server": "cd api && yarn dev:server",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "clean": "rm -rf node_modules yarn.lock package-lock.json && yarn",
     "now-build": "react-scripts build && mv build dist"
   },
   "eslintConfig": {
@@ -55,6 +59,7 @@
     ]
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "@types/history": "^4.7.9",
     "@types/material-ui": "^0.21.9",
     "@types/react-redux": "^7.1.18",
