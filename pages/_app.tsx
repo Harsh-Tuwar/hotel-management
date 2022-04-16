@@ -7,6 +7,7 @@ import { extendTheme } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Router from 'next/router';
 import { Loader } from '../components/ui-components/Loader';
+import storage from '../utils/storage';
 
 const colors = {
   brand: {
@@ -22,17 +23,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(false);
   
   useEffect(() => {
+    storage.init();
     Router.events.on('routeChangeStart', (url) => {
-      console.log('start');
       setLoading(true);
     });
 
     Router.events.on('routeChangeComplete', (url) => {
-      console.log('end');
       setLoading(false);
     });
-
-    console.log('ran');
   }, []);
 
   return (

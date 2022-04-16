@@ -7,9 +7,11 @@ abstract class storage {
 		localforage.ready().then(() => {
 			this.store = localforage.createInstance({
 				name: 'h-hotel',
-				driver: [localforage.WEBSQL,
+				driver: [
+					localforage.WEBSQL,
 					localforage.INDEXEDDB,
-					localforage.LOCALSTORAGE],
+					localforage.LOCALSTORAGE
+				],
 				storeName: 'h-hotel',
 				description: 'h-hotel store'
 			});

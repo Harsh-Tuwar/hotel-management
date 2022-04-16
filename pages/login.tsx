@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import React from 'react';
 import {
   Flex,
   Box,
@@ -13,11 +14,48 @@ import {
   Text,
   useColorModeValue,
   Divider,
+  useToast,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import APP_ROUTES from '../utils/routes';
+import { auth } from '../firebase/index';
+import Router from 'next/router';
+import { ERROR_TOAST_TITLE, TOAST_POSITION } from '../utils/uiUtils';
+import storage from '../utils/storage';
 
 const LoginPage: NextPage = () => {
+  const [user, setUser] = React.useState({ email: '', password: '' });
+	const toast = useToast();
+
+  const login = async (e: any) => {
+    e.preventDefault();
+
+    if (!user || !user['email'] || !user['password']) {
+			toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: 'Email or password field can not be empty!'
+			});
+			return;
+    }
+    
+    const { user: firebaseUser } = await auth.signInWithEmailAndPassword(user.email, user.password);
+
+    if (!firebaseUser) {
+      toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: 'Invalid credentials!'
+			});
+			return;
+    }
+
+    await storage.setItem('user', firebaseUser);
+    Router.push(APP_ROUTES.HOME);
+  }
+
   return (
     <Flex
       minH={'100vh'}
@@ -42,11 +80,11 @@ const LoginPage: NextPage = () => {
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input type="email" onChange={(e) => setUser({ ...user, email: e.currentTarget.value })}/>
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input type="password" onChange={(e) => setUser({ ...user, password: e.currentTarget.value })} />
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -65,7 +103,9 @@ const LoginPage: NextPage = () => {
                 color={'white'}
                 _hover={{
                   bg: 'blue.500',
-                }}>
+                }}
+                onClick={login}
+              >
                 Sign in
               </Button>
             </Stack>
