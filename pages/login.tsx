@@ -12,8 +12,10 @@ import {
   Heading,
   Text,
   useColorModeValue,
+  Divider,
 } from '@chakra-ui/react';
 import Link from 'next/link';
+import APP_ROUTES from '../utils/routes';
 
 const LoginPage: NextPage = () => {
   return (
@@ -27,14 +29,10 @@ const LoginPage: NextPage = () => {
           <Heading fontSize={'4xl'}>Sign in to your account</Heading>
           <Text fontSize={'lg'} color={'gray.600'}>
             to enjoy all of our cool
-            <Link href="/" passHref={true}>
-              <>
-                <ChakraLink color={'blue.400'}>
-                &nbsp;features
-                </ChakraLink> ✌️
-              </>
-            </Link>
-          </Text>
+            <ChakraLink color={'blue.400'}>
+              &nbsp;features
+            </ChakraLink> ✌️
+            </Text>
         </Stack>
         <Box
           rounded={'lg'}
@@ -56,7 +54,7 @@ const LoginPage: NextPage = () => {
                 align={'start'}
                 justify={'space-between'}>
                 <Checkbox>Remember me</Checkbox>
-                <Link href="/forgot-password" passHref={true}>
+                <Link href={APP_ROUTES.FORGOT_PASSWORD} passHref={true}>
                   <ChakraLink color={'blue.400'}>
                     Forgot password?
                   </ChakraLink>
@@ -71,6 +69,16 @@ const LoginPage: NextPage = () => {
                 Sign in
               </Button>
             </Stack>
+            <Divider />
+            <Stack pt={6}>
+							<Text align={'center'}>
+								Don&apos;t have an account? <Link href={APP_ROUTES.SIGN_UP} passHref={true}>
+									<ChakraLink color={'blue.400'}>
+										Sign up
+									</ChakraLink>
+								</Link>
+							</Text>
+						</Stack>
           </Stack>
         </Box>
       </Stack>

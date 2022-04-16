@@ -13,14 +13,72 @@ import {
 	Text,
 	Link as ChakraLink,
 	useColorModeValue,
+	useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { NextPage } from 'next';
 import Link from 'next/link';
+import { auth } from '../firebase';
+import { TOAST_POSITION, ERROR_TOAST_TITLE, SUCCESS_TOAST_TITLE } from '../utils/uiUtils';
+import storage from '../utils/storage';
+import Router from 'next/router';
+import APP_ROUTES from '../utils/routes';
+
+interface NewUser {
+	fname: string;
+	lname: string;
+	email: string;
+	password: string;
+};
 
 const SignUp: NextPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
+	const [user, setUser] = useState<NewUser>({ fname: '', lname: '', email: '', password: '' });
+	const toast = useToast();
+
+	// TODO: type 'e'
+	const signUp = async (e: any) => {
+		e.preventDefault();
+
+		if (!user || !user['email'] || !user['password']) {
+			toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: 'Email or password field can not be empty!'
+			});
+			return;
+		}
+
+		const { user: firebaseUser } = await auth.createUserWithEmailAndPassword(user.email, user.password);
+
+		if (!firebaseUser) {
+			toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: 'Error creating firebase user!'
+			});
+			return;
+		}
+
+		await storage.setItem('user', firebaseUser);
+
+		await auth.currentUser?.updateProfile({
+			displayName: `${user.fname} ${user.lname}`
+		});
+
+		
+		toast({
+			position: TOAST_POSITION,
+			title: SUCCESS_TOAST_TITLE,
+			status: 'success',
+			description: 'Account Created!'
+		});
+		
+		Router.push(APP_ROUTES.HOME);
+	}
 
 	return (
 		<Flex
@@ -47,24 +105,32 @@ const SignUp: NextPage = () => {
 							<Box>
 								<FormControl id="firstName" isRequired>
 									<FormLabel>First Name</FormLabel>
-									<Input type="text" />
+									<Input type="text" onChange={(e: any) => {
+										setUser({ ...user, fname: e.currentTarget.value})
+									}}/>
 								</FormControl>
 							</Box>
 							<Box>
 								<FormControl id="lastName">
 									<FormLabel>Last Name</FormLabel>
-									<Input type="text" />
+									<Input type="text" onChange={(e: any) => {
+										setUser({ ...user, lname: e.currentTarget.value })
+									}}/>
 								</FormControl>
 							</Box>
 						</HStack>
 						<FormControl id="email" isRequired>
 							<FormLabel>Email address</FormLabel>
-							<Input type="email" />
+							<Input type="email" onChange={(e: any) => {
+										setUser({ ...user, email: e.currentTarget.value })
+									}}/>
 						</FormControl>
 						<FormControl id="password" isRequired>
 							<FormLabel>Password</FormLabel>
 							<InputGroup>
-								<Input type={showPassword ? 'text' : 'password'} />
+								<Input type={showPassword ? 'text' : 'password'} onChange={(e: any) => {
+										setUser({ ...user, password: e.currentTarget.value })
+									}}/>
 								<InputRightElement h={'full'}>
 									<Button
 										variant={'ghost'}
@@ -84,13 +150,15 @@ const SignUp: NextPage = () => {
 								color={'white'}
 								_hover={{
 									bg: 'blue.500',
-								}}>
+								}}
+								onClick={signUp}
+							>
 								Sign up
 							</Button>
 						</Stack>
 						<Stack pt={6}>
 							<Text align={'center'}>
-								Already a user? <Link href="/login" passHref={true}>
+								Already a user? <Link href={APP_ROUTES.LOGIN} passHref={true}>
 									<ChakraLink color={'blue.400'}>
 										Login
 									</ChakraLink>

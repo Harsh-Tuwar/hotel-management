@@ -1,5 +1,5 @@
 import firebase from "firebase/compat/app";
-import "firebase/firestore";
+import "firebase/compat/firestore";
 import "firebase/compat/auth";
 
 const clientCredentials = {
@@ -15,3 +15,4 @@ firebase.initializeApp(clientCredentials);
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
+
