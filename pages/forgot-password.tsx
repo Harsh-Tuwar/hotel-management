@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { NextPage } from 'next';
 import {
   Button,
@@ -9,12 +10,23 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { AuthContext } from '../context/authContext';
+import Router from 'next/router';
+import APP_ROUTES from '../utils/routes';
 
 type ForgotPasswordFormInputs = {
   email: string;
 };
 
 const ForgotPassword: NextPage = () => {
+  const authContext = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    if (authContext.checkIfUserAuthenticated()) {
+      Router.push(APP_ROUTES.HOME);
+    }
+  }, []);
+  
   return (
     <Flex
       minH={'100vh'}

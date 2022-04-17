@@ -15,7 +15,7 @@ import {
 	useColorModeValue,
 	useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { NextPage } from 'next';
 import Link from 'next/link';
@@ -24,6 +24,7 @@ import { TOAST_POSITION, ERROR_TOAST_TITLE, SUCCESS_TOAST_TITLE } from '../utils
 import storage from '../utils/storage';
 import Router from 'next/router';
 import APP_ROUTES from '../utils/routes';
+import { AuthContext } from '../context/authContext';
 
 interface NewUser {
 	fname: string;
@@ -36,6 +37,13 @@ const SignUp: NextPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [user, setUser] = useState<NewUser>({ fname: '', lname: '', email: '', password: '' });
 	const toast = useToast();
+	const authContext = useContext(AuthContext);
+
+	useEffect(() => {
+	  if (authContext.checkIfUserAuthenticated()) {
+		Router.push(APP_ROUTES.HOME);
+	  }
+	}, [authContext.user]);
 
 	// TODO: type 'e'
 	const signUp = async (e: any) => {
@@ -63,13 +71,12 @@ const SignUp: NextPage = () => {
 			return;
 		}
 
-		await storage.setItem('user', firebaseUser);
+		await storage.setItem('user', JSON.stringify(firebaseUser));
 
 		await auth.currentUser?.updateProfile({
 			displayName: `${user.fname} ${user.lname}`
 		});
 
-		
 		toast({
 			position: TOAST_POSITION,
 			title: SUCCESS_TOAST_TITLE,

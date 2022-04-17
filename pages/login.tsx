@@ -22,9 +22,18 @@ import { auth } from '../firebase/index';
 import Router from 'next/router';
 import { ERROR_TOAST_TITLE, TOAST_POSITION } from '../utils/uiUtils';
 import storage from '../utils/storage';
+import { AuthContext } from '../context/authContext';
 
 const LoginPage: NextPage = () => {
   const [user, setUser] = React.useState({ email: '', password: '' });
+  const authContext = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    if (authContext.checkIfUserAuthenticated()) {
+      Router.push(APP_ROUTES.HOME);
+    }
+  }, [authContext.user]);
+  
 	const toast = useToast();
 
   const login = async (e: any) => {
@@ -52,7 +61,7 @@ const LoginPage: NextPage = () => {
 			return;
     }
 
-    await storage.setItem('user', firebaseUser);
+    await storage.setItem('user', JSON.stringify(firebaseUser));
     Router.push(APP_ROUTES.HOME);
   }
 

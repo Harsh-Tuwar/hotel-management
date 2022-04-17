@@ -1,13 +1,11 @@
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import { store } from '../redux/store';
-import { Provider } from 'react-redux';
+import * as React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { extendTheme } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import Router from 'next/router';
-import { Loader } from '../components/ui-components/Loader';
+import { useEffect } from 'react';
 import storage from '../utils/storage';
+import { AuthProvider } from '../context/authContext';
 
 const colors = {
   brand: {
@@ -20,28 +18,16 @@ const colors = {
 const theme = extendTheme({ colors })
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [loading, setLoading] = useState(false);
-  
   useEffect(() => {
     storage.init();
-    Router.events.on('routeChangeStart', (url) => {
-      setLoading(true);
-    });
-
-    Router.events.on('routeChangeComplete', (url) => {
-      setLoading(false);
-    });
   }, []);
 
   return (
-    <>
-      {loading ? <Loader /> :
-        <ChakraProvider theme={theme}>
-          <Provider store={store}>
-            <Component {...pageProps} />
-          </Provider>
-        </ChakraProvider>}
-    </>
+    <ChakraProvider theme={theme}>
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
+    </ChakraProvider>
   );
 }
 

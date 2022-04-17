@@ -35,6 +35,13 @@ abstract class storage {
 			console.error(e);
 		});
 	}
+
+	static removeItem = (key: string) => {
+		return this.store?.removeItem(key).catch((e) => {
+			console.log(`Error removing given key ${key}`);
+			console.error(e);
+		})
+	}
 }
 
 export default storage;
