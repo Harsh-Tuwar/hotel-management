@@ -7,9 +7,11 @@ abstract class storage {
 		localforage.ready().then(() => {
 			this.store = localforage.createInstance({
 				name: 'h-hotel',
-				driver: [localforage.WEBSQL,
+				driver: [
+					localforage.WEBSQL,
 					localforage.INDEXEDDB,
-					localforage.LOCALSTORAGE],
+					localforage.LOCALSTORAGE
+				],
 				storeName: 'h-hotel',
 				description: 'h-hotel store'
 			});
@@ -32,6 +34,13 @@ abstract class storage {
 			console.log(`Error setting given key ${key}`);
 			console.error(e);
 		});
+	}
+
+	static removeItem = (key: string) => {
+		return this.store?.removeItem(key).catch((e) => {
+			console.log(`Error removing given key ${key}`);
+			console.error(e);
+		})
 	}
 }
 
