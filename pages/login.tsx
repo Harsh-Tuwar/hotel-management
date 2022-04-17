@@ -49,7 +49,7 @@ const LoginPage: NextPage = () => {
 			return;
     }
     
-    const { user: firebaseUser } = await auth.signInWithEmailAndPassword(user.email, user.password);
+    const firebaseUser = await authContext.login(user.email, user.password);
 
     if (!firebaseUser) {
       toast({
@@ -61,7 +61,6 @@ const LoginPage: NextPage = () => {
 			return;
     }
 
-    await storage.setItem('user', JSON.stringify(firebaseUser));
     Router.push(APP_ROUTES.HOME);
   }
 
