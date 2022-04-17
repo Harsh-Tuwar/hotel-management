@@ -24,11 +24,6 @@ const Home: NextPage = () => {
           </Link>
         </li>
         <li>
-          <Link href="/signup">
-            <a>Signup</a>
-          </Link>
-        </li>
-        <li>
           <Link href="/login">
             <a>Login</a>
           </Link>

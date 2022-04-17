@@ -18,10 +18,8 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import APP_ROUTES from '../utils/routes';
-import { auth } from '../firebase/index';
 import Router from 'next/router';
 import { ERROR_TOAST_TITLE, TOAST_POSITION } from '../utils/uiUtils';
-import storage from '../utils/storage';
 import { AuthContext } from '../context/authContext';
 
 const LoginPage: NextPage = () => {

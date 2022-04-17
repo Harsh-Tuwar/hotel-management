@@ -6,6 +6,7 @@ import { extendTheme } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import storage from '../utils/storage';
 import { AuthProvider } from '../context/authContext';
+import Header from '../components/ui-components/Header';
 
 const colors = {
   brand: {
@@ -25,6 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <AuthProvider>
+        <Header />
         <Component {...pageProps} />
       </AuthProvider>
     </ChakraProvider>
