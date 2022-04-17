@@ -118,15 +118,6 @@ const LoginPage: NextPage = () => {
               </Button>
             </Stack>
             <Divider />
-            <Stack pt={6}>
-							<Text align={'center'}>
-								Don&apos;t have an account? <Link href={APP_ROUTES.SIGN_UP} passHref={true}>
-									<ChakraLink color={'blue.400'}>
-										Sign up
-									</ChakraLink>
-								</Link>
-							</Text>
-						</Stack>
           </Stack>
         </Box>
       </Stack>

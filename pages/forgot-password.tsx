@@ -9,10 +9,12 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import { AuthContext } from '../context/authContext';
 import Router from 'next/router';
 import APP_ROUTES from '../utils/routes';
+import { ERROR_TOAST_TITLE, SUCCESS_TOAST_TITLE, TOAST_POSITION } from '../utils/uiUtils';
 
 type ForgotPasswordFormInputs = {
   email: string;
@@ -20,12 +22,47 @@ type ForgotPasswordFormInputs = {
 
 const ForgotPassword: NextPage = () => {
   const authContext = React.useContext(AuthContext);
+  const [email, setEmail] = React.useState('');
+  const toast = useToast();
 
   React.useEffect(() => {
     if (authContext.checkIfUserAuthenticated()) {
       Router.push(APP_ROUTES.HOME);
     }
-  }, []);
+  }, [authContext.user]);
+
+  const sendResetLink = async () => {
+    if (!email) {
+      toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: 'Please type in the email address!'
+			});
+			return;
+    }
+
+    const test = await authContext.sendForgetPasswordLink(email);
+
+    if (test === 'Sent') {
+      toast({
+				position: TOAST_POSITION,
+				status: 'success',
+				title: SUCCESS_TOAST_TITLE,
+				description: 'Email Sent! Please check your inbox!'
+      });
+      Router.push(APP_ROUTES.LOGIN);
+    } else {
+      const errorMessage = test.substring(10);
+
+      toast({
+				position: TOAST_POSITION,
+				status: 'error',
+				title: ERROR_TOAST_TITLE,
+				description: errorMessage
+			});
+    }
+  }
   
   return (
     <Flex
@@ -55,6 +92,7 @@ const ForgotPassword: NextPage = () => {
             placeholder="your-email@example.com"
             _placeholder={{ color: 'gray.500' }}
             type="email"
+            onChange={e => setEmail(e.currentTarget.value)}
           />
         </FormControl>
         <Stack spacing={6}>
@@ -63,7 +101,9 @@ const ForgotPassword: NextPage = () => {
             color={'white'}
             _hover={{
               bg: 'blue.500',
-            }}>
+            }}
+            onClick={sendResetLink}
+          >
             Request Reset
           </Button>
         </Stack>

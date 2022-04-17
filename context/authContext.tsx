@@ -10,6 +10,8 @@ type AuthContextType = {
 	checkIfUserAuthenticated: () => boolean;
 	logout: () => Promise<void>;
 	login: (email: string, password: string) => Promise<firebase.UserInfo | null>;
+	signup: (email: string, password: string, firstName: string, lastName: string) => Promise<boolean>;
+	sendForgetPasswordLink: (email: string) => Promise<string>
 };
 
 type Props = {
@@ -20,7 +22,9 @@ const AuthContextDefaultValues: AuthContextType = {
 	user: null,
 	checkIfUserAuthenticated: () => false,
 	logout: async () => {},
-	login: async (_email: string, _password: string) => null
+	login: async (_email: string, _password: string) => null,
+	signup: async (_email: string, _password: string, _firstName: string, _lastName: string) => false,
+	sendForgetPasswordLink: async (_email: string) => ''
 };
 
 const AuthContext = createContext<AuthContextType>(AuthContextDefaultValues);
@@ -55,16 +59,43 @@ const AuthProvider = ({ children }: Props) => {
 		return firebaseUser;
 	}
 
+	const signup = async (
+		email: string,
+		password: string,
+		firstName: string,
+		lastName: string
+	) => {
+		const { user: newUser } = await auth.createUserWithEmailAndPassword(
+			email,
+			password
+		);
+
+		if (!newUser) {
+			return false;
+		}
+
+		await storage.setItem('user', JSON.stringify(newUser));
+		await auth.currentUser?.updateProfile({
+			displayName: `${firstName} ${lastName}`
+		});
+
+		return true;
+	}
+
+	const sendForgetPasswordLink = async (email: string): Promise<string> => {
+		return auth.sendPasswordResetEmail(email).then(() => 'Sent').catch((e) => {
+			return e.message;
+		});
+	}
+
 	useEffect(() => {
 		const { pathname } = Router;
 
 		auth.onAuthStateChanged((user) => {
-			console.log(user);
 			if (user) {
 				setUser(user);
 				if ([
 					APP_ROUTES.LOGIN,
-					APP_ROUTES.SIGN_UP,
 					APP_ROUTES.FORGOT_PASSWORD
 				].includes(pathname)) {
 					Router.push(APP_ROUTES.HOME);
@@ -78,8 +109,15 @@ const AuthProvider = ({ children }: Props) => {
 	const value = {
 		user: user,
 		checkIfUserAuthenticated: () => checkIfUserAuthenticated(),
-		logout: () => logout(),
-		login: (email: string, password: string) => login(email, password),
+		logout: async () => await logout(),
+		login: async (email: string, password: string) => await login(email, password),
+		signup: async (email: string, password: string, firstName: string, lastName: string) => await signup(
+			email,
+			password,
+			firstName,
+			lastName
+		),
+		sendForgetPasswordLink: async (email: string) => await sendForgetPasswordLink(email)
     };
 
     return (
