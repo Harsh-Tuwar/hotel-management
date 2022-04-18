@@ -14,6 +14,14 @@ interface LinkItemProps {
 export const APP_NAME = "MyHotel";
 
 export const SIDEBAR_LINKS: Array<LinkItemProps> = [
-	{ name: 'Home', icon: FiHome, route: APP_ROUTES.HOME },
-	{ name: 'Settings', icon: FiSettings, route: APP_ROUTES.SETTINGS },
+	{
+		name: 'Home',
+		icon: FiHome,
+		route: APP_ROUTES.HOME
+	},
+	{
+		name: 'Settings',
+		icon: FiSettings,
+		route: APP_ROUTES.SETTINGS
+	},
 ];

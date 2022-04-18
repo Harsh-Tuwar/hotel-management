@@ -5,21 +5,13 @@ import Router from 'next/router';
 import APP_ROUTES from '../utils/routes';
 import SidebarWithHeader from '../components/layout-components/Navbar';
 
-const Home: NextPage = () => {
-  const authContext = React.useContext(AuthContext);
-
-  React.useEffect(() => {
-    if (authContext.checkIfUserAuthenticated()) {
-      Router.push(APP_ROUTES.HOME);
-    }
-  }, [authContext.user]);
-
+const Settings: NextPage = () => {
   return (
     <SidebarWithHeader>
-      <div>Home</div>
+      <div>Settings</div>
     </SidebarWithHeader>
   )
 }
 
-export default Home;
+export default Settings;
 
