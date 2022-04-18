@@ -1,8 +1,8 @@
 import { Flex, FlexProps, Icon, Link as ChakraLink } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ReactText } from 'react';
 import { IconType } from 'react-icons';
+import Link from 'next/link';
 
 interface NavItemProps extends FlexProps {
 	icon: IconType;
@@ -26,8 +26,8 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
 					bg={router.pathname === route ? 'cyan.400' : 'white'}
 					color={router.pathname === route ? 'white' : 'black'}
 					_hover={{
-						bg: router.pathname === route ? '' : 'cyan.400',
-						color: router.pathname === route ? '' : 'white',
+						bg: router.pathname === route ? '' : 'cyan.200',
+						color: router.pathname === route ? '' : 'black',
 					}}
 					{...rest}>
 					{icon && (
@@ -35,7 +35,7 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
 							mr="4"
 							fontSize="16"
 							_groupHover={{
-								color: 'white',
+								color:  router.pathname === route ? 'white' : 'black',
 							}}
 							as={icon}
 						/>
