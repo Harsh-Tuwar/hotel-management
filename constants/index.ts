@@ -1,7 +1,9 @@
 import {
 	FiHome,
 	FiSettings,
+	FiUsers
 } from 'react-icons/fi';
+import { MdOutlinePets } from 'react-icons/md';
 import { IconType } from 'react-icons';
 import APP_ROUTES from '../utils/routes';
 
@@ -18,6 +20,16 @@ export const SIDEBAR_LINKS: Array<LinkItemProps> = [
 		name: 'Home',
 		icon: FiHome,
 		route: APP_ROUTES.HOME
+	},
+	{
+		name: 'Users',
+		icon: FiUsers,
+		route: APP_ROUTES.USERS
+	},
+	{
+		name: 'Pets',
+		icon: MdOutlinePets,
+		route: APP_ROUTES.PETS
 	},
 	{
 		name: 'Settings',

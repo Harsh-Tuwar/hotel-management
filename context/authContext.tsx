@@ -49,7 +49,7 @@ const AuthProvider = ({ children }: Props) => {
 		const { user: firebaseUser } = await auth.signInWithEmailAndPassword(
 			email,
 			password
-		);
+		).catch((e)=> ({ user: null }));
 
 		if (!firebaseUser) {
 			return null;

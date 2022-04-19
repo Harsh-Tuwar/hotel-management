@@ -16,6 +16,7 @@ const SidebarWithHeader = ({
 	children: ReactNode;
 }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	
 	return (
 		<Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
 			<SidebarContent
@@ -29,7 +30,8 @@ const SidebarWithHeader = ({
 				onClose={onClose}
 				returnFocusOnClose={false}
 				onOverlayClick={onClose}
-				size="full">
+				size="sm"
+			>
 				<DrawerContent>
 					<SidebarContent onClose={onClose} />
 				</DrawerContent>

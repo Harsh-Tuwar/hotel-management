@@ -1,6 +1,7 @@
 import { Avatar, Box, Text, Flex, FlexProps, HStack, IconButton, Menu, MenuButton, MenuDivider, MenuItem, MenuList, useColorModeValue, VStack } from '@chakra-ui/react';
 import React from 'react';
 import { FiMenu, FiBell, FiChevronDown } from 'react-icons/fi';
+import { APP_NAME } from '../../constants';
 import { AuthContext } from '../../context/authContext';
 
 interface MobileProps extends FlexProps {
@@ -33,7 +34,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 				fontSize="2xl"
 				fontFamily="monospace"
 				fontWeight="bold">
-				MyHotel
+				{APP_NAME}
 			</Text>
 
 			<HStack spacing={{ base: '0', md: '6' }}>
